@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "required": ["answer", "sources", "governance"],
+  "properties": {
+    "answer": {
+      "type": "string",
+      "description": "Human-readable answer or refusal explanation"
+    },
+    "definitions_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition", "status"],
+        "properties": {
+          "term": { "type": "string" },
+          "definition": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["CERTIFIED", "DRAFT"]
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["CERTIFIED"]
+          }
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["certified_only", "refusal"],
+      "properties": {
+        "certified_only": { "type": "boolean" },
+        "refusal": {
+          "type": "object",
+          "required": ["is_refused", "reason"],
+          "properties": {
+            "is_refused": { "type": "boolean" },
+            "reason": { "type": "string" },
+            "suggested_alternatives": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+product_id,product_name,product_category
+P01,Everyday Transaction Account,DEPOSIT
+P02,Savings Account,DEPOSIT
+P03,Home Loan,LOAN
+P04,Business Loan,LOAN

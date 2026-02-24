@@ -1,0 +1,17 @@
+runtime:
+  timezone: "Australia/Sydney"
+  certified_only: true
+  max_context_chunks: 6
+  enforce_schema: true
+
+llm:
+  provider: "lmstudio"
+  base_url: "http://localhost:1234/v1"
+  model: "local-model"   # LM Studio model name (placeholder)
+  temperature: 0.1
+  max_tokens: 600
+
+retrieval:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  index_path: "07_runtime_local/rag/index.faiss"
+  store_path: "07_runtime_local/rag/store.json"

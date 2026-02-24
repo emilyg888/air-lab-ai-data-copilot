@@ -1,0 +1,136 @@
+version: 1
+purpose: >
+  Register of certified semantic views approved for AI consumption.
+  This register defines the AI access boundary.
+
+datasets:
+
+  - name: vw_active_customers
+    type: semantic_view
+    status: CERTIFIED
+    owner: Customer Analytics
+    steward: Customer Data Steward
+    freshness_sla_hours: 24
+    last_refresh_ts: "2026-02-05T09:00:00+11:00"
+    description: >
+      Authoritative view implementing the Active Customer definition.
+    source_tables:
+      - customers
+      - accounts
+    lineage:
+      joins:
+        - customers.customer_id = accounts.customer_id
+      filters:
+        - customers.status = 'ACTIVE'
+        - accounts.account_status = 'OPEN'
+      derivations:
+        - open_account_count = COUNT(accounts.account_id)
+    allowed_fields:
+      - customer_id
+      - segment
+      - status
+      - onboard_date
+      - open_account_count
+    excluded_fields:
+      - risk_rating
+
+  - name: vw_account_summary
+    type: semantic_view
+    status: CERTIFIED
+    owner: Finance
+    steward: Finance Data Steward
+    freshness_sla_hours: 24
+    last_refresh_ts: "2026-02-05T09:00:00+11:00"
+    description: >
+      One row per account with end-of-day balance and lifecycle attributes.
+
+    source_tables:
+      - accounts
+
+    lineage:
+      joins: []
+    
+    allowed_fields:
+      - account_id
+      - customer_id
+      - account_status
+      - open_date
+      - close_date
+      - balance
+      - currency
+
+
+  - name: vw_daily_transactions
+    type: semantic_view
+    status: CERTIFIED
+    owner: Payments Operations
+    steward: Payments Data Steward
+    freshness_sla_hours: 6
+    last_refresh_ts: "2026-02-05T14:00:00+11:00"
+    description: >
+      Daily aggregated transaction metrics by channel and product category.
+    source_tables:
+      - transactions
+      - products
+    lineage:
+      joins:
+        - transactions.product_id = products.product_id
+      group_by:
+        - transaction_date
+        - channel
+        - product_category
+        - currency
+      aggregations:
+        - transaction_count = COUNT(transaction_id)
+        - transaction_total_value = SUM(amount)
+    allowed_fields:
+      - transaction_date
+      - channel
+      - product_id
+      - product_category
+      - transaction_count
+      - transaction_total_value
+      - currency
+    excluded_fields:
+      - transaction_id
+      - account_id
+      - customer_id
+
+  - name: vw_account_transactions
+    type: semantic_view
+    status: CERTIFIED
+    owner: Finance
+    steward: Finance Data Steward
+    freshness_sla_hours: 6
+    last_refresh_ts: "2026-02-17T21:00:00+11:00"
+    description: >
+      Account-level aggregated transaction metrics by product category.
+      One row per account and product category.
+
+    source_tables:
+      - accounts
+      - transactions
+      - products
+
+    lineage:
+      joins:
+        - transactions.account_id = accounts.account_id
+        - transactions.product_id = products.product_id
+      group_by:
+        - account_id
+        - product_category
+      aggregations:
+        - total_count = COUNT(transaction_id)
+        - total_value = SUM(amount)
+
+    allowed_fields:
+      - account_id
+      - product_category
+      - total_count
+      - total_value
+
+    excluded_fields:
+      - transaction_id
+      - transaction_date
+      - channel
+      - customer_id

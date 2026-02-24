@@ -1,0 +1,27 @@
+index_name: air_lab_semantic_rag
+embedding_model: nomic-embed-text
+vector_store: chromadb
+
+source_policy:
+  allowed_layers:
+    - semantic_views
+    - certified_metrics
+    - business_glossary
+  excluded_layers:
+    - raw_tables
+    - staging
+    - scratch
+
+chunking:
+  strategy: semantic
+  max_tokens: 500
+  overlap_tokens: 50
+
+metadata:
+  required:
+    - domain
+    - view_name
+    - metric_name
+    - certification_status
+    - owner
+    - last_validated_date

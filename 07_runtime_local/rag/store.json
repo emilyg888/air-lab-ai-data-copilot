@@ -1,0 +1,37 @@
+[
+  {
+    "type": "glossary",
+    "name": "Active Customer",
+    "text": "Active Customer: A customer with status ACTIVE and at least one OPEN account as of the reporting date.\n"
+  },
+  {
+    "type": "glossary",
+    "name": "Account Balance",
+    "text": "Account Balance: The end-of-day monetary balance of an account expressed in the account currency.\n"
+  },
+  {
+    "type": "glossary",
+    "name": "Daily Transaction Volume",
+    "text": "Daily Transaction Volume: The total count and total value of transactions processed per day, segmented by channel and product category.\n"
+  },
+  {
+    "type": "semantic_view",
+    "name": "vw_account_transactions",
+    "text": "# vw_account_transactions (CERTIFIED)\n\n## Purpose\n\nProvides aggregated transaction metrics at the account level,\nsegmented by product category.\n\nSupports account-level transaction analysis without exposing\nrow-level transaction detail.\n\n---\n\n## Grain\n\n- One row per:\n  - account_id\n  - product_category\n\n---\n\n## Source Tables\n\n- accounts\n- transactions\n- products\n\n---\n\n## Exposed Fields\n\n| Field            | Description               |\n| ---------------- | ------------------------- |\n| account_id       | Unique account identifier |\n| product_category | Product grouping          |\n| total_count      | Number of transactions    |\n| total_value      | Total transaction amount  |\n\n---\n\n## Governance Controls\n\n- No transaction-level detail exposed\n- No customer-identifiable information beyond account_id\n- Descriptive aggregation only\n\n---\n\n## Approved Usage\n\n- Account transaction analysis\n- Product exposure analysis\n- Concentration monitoring\n\n---\n\n## Disallowed Usage\n\n- Predictive modeling\n- Customer profiling\n- Risk scoring\n"
+  },
+  {
+    "type": "semantic_view",
+    "name": "vw_account_summary",
+    "text": "# vw_account_summary (CERTIFIED)\n\n## Purpose\nProvides a **trusted, account-level summary** of account lifecycle and\nend-of-day balance information for reporting and AI explanation.\n\nThis view standardises how accounts are described and consumed.\n\n---\n\n## Business Context\nSupports glossary concepts such as:\n- Account Balance (CERTIFIED)\n\n---\n\n## Grain\n- One row per **account**\n\n---\n\n## Source Tables\n- accounts\n\n\n---\n\n## Exposed Fields\n| Field | Description |\n|------|------------|\n| account_id | Unique account identifier |\n| customer_id | Owning customer |\n| account_status | OPEN / CLOSED |\n| open_date | Account open date |\n| close_date | Account close date |\n| balance | End-of-day account balance |\n| currency | Account currency |\n\n---\n\n## Governance Controls\n- Balance is **descriptive only**\n- No forecasting, valuation, or optimisation logic\n- Product attributes are limited to approved category fields\n- No customer-identifiable attributes beyond IDs\n\n---\n\n## Approved Usage\n- Account balance reporting\n- Account lifecycle analysis\n- Balance by product category\n\n---\n\n## Disallowed Usage\n- Customer profiling\n- Predictive balance analysis\n- Credit or risk scoring\n\n---\n\n## AI Governance Notes\n- AI may summarise balances and counts\n- AI must not speculate about future balance changes\n- AI must refuse requests for customer-level financial profiling\n"
+  },
+  {
+    "type": "semantic_view",
+    "name": "vw_active_customers",
+    "text": "# vw_active_customers (CERTIFIED)\n\n## Purpose\nProvides the **authoritative Active Customer population** for enterprise\nreporting and AI explanation.\n\nThis view implements the certified business glossary definition of\n**Active Customer** and is the single approved source for this concept.\n\n---\n\n## Business Definition\n**Active Customer**  \nA customer with status ACTIVE and at least one OPEN account as of the reporting date.\n\nSource: Business Glossary (`Active Customer`, CERTIFIED)\n\n---\n\n## Grain\n- One row per **active customer**\n\n---\n\n## Source Tables\n- customers\n- accounts\n\n---\n\n## Join Logic\n- customers.customer_id = accounts.customer_id\n\n---\n\n## Filters\n- customers.status = 'ACTIVE'\n- accounts.account_status = 'OPEN'\n\n---\n\n## Derived Attributes\n- open_account_count = COUNT(accounts.account_id)\n\n---\n\n## Exposed Fields\n| Field | Description |\n|------|------------|\n| customer_id | Unique customer identifier |\n| segment | Business segmentation |\n| status | Customer lifecycle status |\n| onboard_date | Customer onboarding date |\n| open_account_count | Number of open accounts |\n\n---\n\n## Explicit Exclusions\nThe following are intentionally excluded:\n- risk_rating (DRAFT glossary term)\n- account balances\n- product attributes\n- transaction detail\n\nThese exclusions prevent:\n- interpretation risk\n- leakage of uncertified concepts\n- misuse outside approved semantics\n\n---\n\n## Approved Usage\n- Active customer counts\n- Active customer trends\n- Segmentation analysis\n\n---\n\n## Disallowed Usage\n- Risk analysis\n- Revenue attribution\n- Product performance analysis\n\n---\n\n## AI Governance Notes\n- AI must quote the glossary definition when explaining this view\n- AI must not infer customer risk or value\n- AI must refuse questions requiring excluded attributes\n"
+  },
+  {
+    "type": "semantic_view",
+    "name": "vw_daily_transactions",
+    "text": "# vw_daily_transactions (CERTIFIED)\n\n## Purpose\nProvides **daily aggregated transaction metrics** by channel and product\ncategory for enterprise reporting and AI explanation.\n\nThis view supports **descriptive analysis only** and is designed to expose\napproved transaction behaviour without revealing row-level or identifiable data.\n\n---\n\n## Business Definition\n**Daily Transaction Volume**  \nThe total count and total value of transactions processed per day,\nsegmented by channel and product category.\n\nSource: Business Glossary (`Daily Transaction Volume`, CERTIFIED)\n\n---\n\n## Grain\n- One row per:\n  - transaction_date\n  - channel\n  - product_category\n  - currency\n\n---\n\n## Physical Source Tables\n- transactions\n- accounts\n- products\n\n---\n\n## Join Path (Explicit)\n\nThis view resolves product attribution through the **approved semantic join path**:\n\n```text\nTRANSACTIONS.transaction_id\n        \u2193\nTRANSACTIONS.account_id\n        \u2193\nACCOUNTS.account_id\n\nTRANSACTIONS.transaction_id\n        \u2193\nTRANSACTIONS.product_id\n        \u2193\nPRODUCTS.product_id"
+  }
+]

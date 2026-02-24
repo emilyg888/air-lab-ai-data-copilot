@@ -1,0 +1,54 @@
+version: 1
+purpose: >
+  Authoritative business definitions used by the Governed Enterprise Data Copilot.
+  Glossary terms define meaning and certification status.
+  The AI must quote definitions verbatim and respect term status.
+
+terms:
+
+  - term: Active Customer
+    status: CERTIFIED
+    domain: Customer
+    owner: Head of Data
+    steward: Customer Data Steward
+    definition: >
+      A customer with status ACTIVE and at least one OPEN account
+      as of the reporting date.
+    calculation:
+      logic: customer.status = 'ACTIVE' AND account.account_status = 'OPEN'
+      implemented_by:
+        - vw_active_customers
+    notes: >
+      This is the authoritative enterprise definition for reporting and analytics.
+
+  - term: Account Balance
+    status: CERTIFIED
+    domain: Account
+    owner: Finance
+    steward: Finance Data Steward
+    definition: >
+      The end-of-day monetary balance of an account expressed in the account currency.
+    implemented_by:
+      - vw_account_summary
+
+  - term: Daily Transaction Volume
+    status: CERTIFIED
+    domain: Transaction
+    owner: Operations
+    steward: Payments Data Steward
+    definition: >
+      The total count and total value of transactions processed per day,
+      segmented by channel and product category.
+    implemented_by:
+      - vw_daily_transactions
+
+  - term: Risk Rating
+    status: DRAFT
+    domain: Risk
+    owner: Risk Management
+    steward: Risk Data Steward
+    definition: >
+      A categorical assessment of customer risk derived from internal policies
+      and decision rules.
+    notes: >
+      Draft term. Not approved for enterprise reporting or AI-assisted explanation.
