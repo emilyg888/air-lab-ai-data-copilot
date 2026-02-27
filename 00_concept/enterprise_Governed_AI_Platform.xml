@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="Option B - Cortex Native">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="Collibra AI Governance" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="220" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="3" value="Snowflake Data Platform&#10;(RAW → CURATED → Semantic Views)" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="300" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="4" value="Snowflake Cortex&#10;(LLM + AI in Database)" vertex="1" parent="1">
+          <mxGeometry x="450" y="260" width="300" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="5" value="AI Output Governance&#10;(Masking, Policy, Limits)" vertex="1" parent="1">
+          <mxGeometry x="450" y="400" width="300" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="6" value="Enterprise User" vertex="1" parent="1">
+          <mxGeometry x="500" y="560" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="7" edge="1" source="2" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="8" edge="1" source="3" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="9" edge="1" source="4" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="10" edge="1" source="5" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
