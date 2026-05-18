@@ -1,0 +1,7 @@
+Understand the repository.
+Focus on:
+- RAG pipeline
+- semantic layer
+- query engine
+
+Then suggest 3 improvements.

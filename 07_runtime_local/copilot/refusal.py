@@ -104,8 +104,8 @@ def should_refuse(question: str, glossary: dict, register: dict, required_views:
 
 if __name__ == "__main__":
     # Quick manual test
-    from ingest.load_glossary import load_glossary
-    from ingest.load_dataset_register import load_dataset_register
+    from ..ingest.load_glossary import load_glossary
+    from ..ingest.load_dataset_register import load_dataset_register
 
     glossary = load_glossary()
     register = load_dataset_register()

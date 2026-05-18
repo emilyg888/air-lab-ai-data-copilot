@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" version="29.5.3">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.6">
   <diagram name="Governed AI Data Copilot - With Result Governance" id="0">
-    <mxGraphModel dx="1357" dy="849" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="2093" dy="882" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -33,7 +33,7 @@
         <mxCell id="query" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede7f6;strokeColor=#689F38;fontSize=16;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Query Engine&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;div&gt;- build_sql.py&lt;br&gt;- enforce_policy.py&lt;br&gt;- execute_query.py&lt;/div&gt;" vertex="1">
           <mxGeometry height="150" width="340" x="520" y="240" as="geometry" />
         </mxCell>
-        <mxCell id="resultgov" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#2DA0DF;strokeWidth=2;fontSize=16;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Lite Result Governance Layer&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;(Runtime)&lt;br&gt;&lt;/span&gt;&lt;br&gt;&lt;div&gt;- Column Whitelisting&lt;br&gt;- PII Masking&lt;br&gt;- Row Limits&lt;br&gt;- Sensitivity Check&lt;br&gt;- Provenance Tagging&lt;/div&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="resultgov" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#2DA0DF;strokeWidth=2;fontSize=16;" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Lite Result Governance Layer&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;(Runtime)&lt;br&gt;&lt;/span&gt;&lt;br&gt;&lt;div&gt;- Column Whitelisting&lt;br&gt;- PII Masking&lt;br&gt;- Topic Check&lt;br&gt;- Truthfulness &amp;amp; Grounding&lt;/div&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="170" width="340" x="520" y="435" as="geometry" />
         </mxCell>
         <mxCell id="xemcwh-tY4wRZToqQIin-9" edge="1" parent="1" source="copilot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=16;" target="xemcwh-tY4wRZToqQIin-8">

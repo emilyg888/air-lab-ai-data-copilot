@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 import faiss
-from numpy import indices
 from sentence_transformers import SentenceTransformer
 
 
@@ -56,4 +55,3 @@ def retrieve_context(
             break
 
     return results
-

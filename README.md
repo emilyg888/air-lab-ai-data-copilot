@@ -1,194 +1,91 @@
-# 07_runtime_local
+# Air Lab AI Data Copilot
 
-This folder contains the **local execution plane** for the air-lab AI Data Copilot.
+## Overview
 
-It implements the full governed runtime flow:
+Air Lab AI Data Copilot is a governed enterprise AI data copilot reference project. It demonstrates how certified business glossary terms, semantic views, deterministic SQL, policy enforcement, and a constrained LLM narrative layer can work together without giving the model direct control over data access or governance decisions.
 
-Governance → RAG → Deterministic SQL → Policy Enforcement → Data Execution → LLM Narrative
+The repository is intentionally organized as a handoff-ready architecture and local runtime example, not as a packaged production service.
 
-This layer demonstrates how an enterprise AI copilot should operate safely on certified semantic data.
+## Architecture Summary
 
----
+The runtime follows this pattern:
 
-# 🔷 Runtime Architecture Overview
+```text
+Governance artifacts -> RAG retrieval -> SQL templates -> Policy enforcement -> DuckDB execution -> LLM narrative -> Governed response
+```
 
+Key principles:
 
-The runtime is deliberately split into deterministic and probabilistic layers.
+- semantic views define the AI access boundary;
+- governance checks happen before inference;
+- SQL is template-driven, not model-generated;
+- raw sample tables are hidden behind certified semantic views;
+- the LLM explains certified context and query results only.
 
-The LLM is never allowed to:
-- execute SQL
-- access raw tables
-- enforce governance rules
-- modify response schema
+## Repository Structure
 
----
+| Path | Purpose |
+|---|---|
+| `00_concept/` | Concept diagrams, architecture notes, and presentation material. |
+| `01_governance/` | Business glossary, dataset register, certification policy, and governance examples. |
+| `02_semantic_layer/` | Certified semantic view documentation and SQL definitions. |
+| `03_data/` | Local sample CSV data and data dictionary. |
+| `04_copilot_contract/` | Prompt contract, response schema, question bank, and example responses. |
+| `05_evaluation/` | Evaluation criteria, scoring rubric, and test cases. |
+| `06_architecture/` | Architecture diagrams and lineage documentation. |
+| `07_runtime_local/` | Local Python runtime for governed retrieval, SQL execution, and response generation. |
+| `design/` | Current architecture document and pending review issue log. |
+| `notes_ai/` | Working notes and synthesis material pending review. |
 
-# 🔹 Folder Responsibilities
+## Setup
 
-## config/
-Runtime configuration (model name, endpoints, environment settings).
+Use the existing local virtual environment if present:
 
----
+```bash
+.venv/bin/python -m compileall -q 07_runtime_local
+```
 
-## ingest/
-Loads certified governance and semantic artifacts into memory:
+The runtime expects dependencies such as `duckdb`, `faiss`, `sentence-transformers`, `requests`, and `pyyaml` to be installed in the active Python environment.
 
-- `load_glossary.py`
-- `load_dataset_register.py`
-- `load_semantic_views.py`
+## Run
 
-These define the **AI access boundary**.
+Build or refresh the local RAG index when governance or semantic-layer documents change:
 
----
+```bash
+.venv/bin/python -m 07_runtime_local.rag.build_index
+```
 
-## rag/
+Run the interactive copilot locally:
 
-### Purpose
-Implements semantic retrieval over certified artifacts.
+```bash
+.venv/bin/python -m 07_runtime_local.copilot.answer
+```
 
-### Components
+The narrative layer currently calls an OpenAI-compatible local endpoint at `http://127.0.0.1:1234/v1`.
 
-- `build_index.py`
-  - Embeds certified glossary + semantic views
-  - Writes `index.faiss` (vector index)
-  - Writes `store.json` (document store)
+## Test / SIT
 
-- `retrieve_context.py`
-  - Searches FAISS
-  - Filters to allowed semantic views
-  - Returns certified context only
+Current smoke/SIT commands:
 
-RAG retrieves **meaning**, not data.
+```bash
+.venv/bin/python -m compileall -q 07_runtime_local
+.venv/bin/python -m 07_runtime_local.copilot.refusal
+.venv/bin/python -c "import importlib; b=importlib.import_module('07_runtime_local.query_engine.build_sql'); p=importlib.import_module('07_runtime_local.query_engine.enforce_policy'); e=importlib.import_module('07_runtime_local.query_engine.execute_query'); sql=b.build_sql('vw_active_customers','Show active customers by segment'); p.enforce_policy(sql,'vw_active_customers'); print(e.execute_query(sql))"
+```
 
----
+See `design/issues-pending-review.md` for the latest SIT results.
 
-## query_engine/
+## Configuration
 
-### Purpose
-Implements deterministic execution over semantic views.
+Runtime configuration lives in `07_runtime_local/config/runtime_config.yaml`. Do not commit secret values or local `.env` files. The repository `.gitignore` excludes common environment files, virtual environments, caches, and editor artifacts.
 
-This is the **Policy Enforcement Point (PEP)**.
+## Documentation
 
-### Components
+- Architecture: `design/architecture.md`
+- Pending review issues: `design/issues-pending-review.md`
+- Runtime notes: `07_runtime_local/dev_folder_structure.md`
+- Concept notes: `00_concept/README.md`
 
-- `build_sql.py`
-  - Builds view-scoped SQL templates
-  - No model-generated SQL allowed
+## Current Status
 
-- `enforce_policy.py`
-  - Ensures only certified semantic views are used
-  - Blocks raw table access
-  - Prevents schema drift
-
-- `execute_query.py`
-  - Executes SQL against the data layer
-  - Returns structured result rows
-  - Replace mock execution with real DB connector in production
-
-This layer ensures governance remains deterministic and external to the model.
-
----
-
-## copilot/
-
-### Purpose
-Orchestrates the full runtime flow.
-
-- `answer.py`
-  - Main entrypoint
-  - Coordinates governance → RAG → SQL → execution → LLM
-  - Wraps final response in certified schema
-
-- `llm_generate.py`
-  - LLM narrative layer
-  - Receives:
-    - question
-    - certified semantic context
-    - query results
-  - Produces explanation only
-
-- `refusal.py`
-  - Handles governance refusal scenarios
-
-The LLM only generates explanation text.
-All governance metadata is injected by Python.
-
----
-
-## outputs/
-
-Stores sample runtime responses for evaluation.
-
----
-
-# 🔷 End-to-End Flow
-
-1. **Pre-inference governance**
-   - Validate required semantic views
-   - Refuse if uncertified
-
-2. **RAG retrieval**
-   - Retrieve glossary + semantic view definitions
-   - Certified context only
-
-3. **SQL build**
-   - Deterministic template generation
-
-4. **Policy enforcement**
-   - Block raw table access
-   - Enforce semantic boundary
-
-5. **Query execution**
-   - Retrieve structured result rows
-
-6. **LLM narrative generation**
-   - Explain results using certified context
-   - No SQL generation
-   - No governance control
-
-7. **Response wrapping**
-   - Inject definitions_used
-   - Inject source metadata
-   - Inject governance envelope
-
----
-
-# 🔷 Key Design Principles
-
-- Semantic views are the AI access boundary
-- Governance remains outside the LLM
-- SQL is deterministic and template-driven
-- No raw table access
-- Response schema is enforced by code
-- The LLM is a reasoning layer, not a control plane
-
----
-
-# 🔷 Local vs Enterprise
-
-This local runtime demonstrates the architecture pattern.
-
-In enterprise deployment:
-
-- FAISS → managed vector service
-- execute_query → Snowflake / Databricks / Fabric
-- Orchestrator → API service (FastAPI)
-- Governance → centralized policy engine
-- Observability → audit logs + traceability
-
----
-
-# 🔷 Current Status
-
-✔ RAG semantic retrieval  
-✔ Deterministic SQL templates  
-✔ Policy enforcement layer  
-✔ LLM narrative generation  
-✔ Certified response schema enforcement  
-
-This is no longer a RAG demo.
-
-It is a governed enterprise AI data copilot runtime.
-
----
-
+The local runtime demonstrates governed RAG, deterministic SQL templates, certified semantic view execution, and policy-based refusal behavior. Formal automated tests and CI/CD are not yet present.
